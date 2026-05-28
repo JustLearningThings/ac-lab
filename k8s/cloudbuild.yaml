@@ -1,0 +1,54 @@
+substitutions:
+  _IMAGE_TAG: "v1"
+
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/lab-repo/service-1:${_IMAGE_TAG}'
+      - './service_1'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/lab-repo/service-2:${_IMAGE_TAG}'
+      - './service_2'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/lab-repo/service-1:${_IMAGE_TAG}'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/lab-repo/service-2:${_IMAGE_TAG}'
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        sed -i "s|IMAGE_SERVICE_1|europe-west1-docker.pkg.dev/$PROJECT_ID/lab-repo/service-1:${_IMAGE_TAG}|g" k8s/service_1-deployment.yaml
+        sed -i "s|IMAGE_SERVICE_2|europe-west1-docker.pkg.dev/$PROJECT_ID/lab-repo/service-2:${_IMAGE_TAG}|g" k8s/service_2-deployment.yaml
+
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'apply'
+      - '-f'
+      - 'k8s/service_1-deployment.yaml'
+      - '-f'
+      - 'k8s/service_1-service.yaml'
+      - '-f'
+      - 'k8s/service_2-deployment.yaml'
+      - '-f'
+      - 'k8s/service_2-service.yaml'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=lab-cluster'
+
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/lab-repo/service-1:${_IMAGE_TAG}'
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/lab-repo/service-2:${_IMAGE_TAG}'
