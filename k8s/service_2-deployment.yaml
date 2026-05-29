@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: service-2-deployment
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: service-2
@@ -17,3 +17,10 @@ spec:
           image: IMAGE_SERVICE_2
           ports:
             - containerPort: 8002
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"

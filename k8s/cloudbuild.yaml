@@ -45,6 +45,8 @@ steps:
       - 'k8s/service_2-deployment.yaml'
       - '-f'
       - 'k8s/service_2-service.yaml'
+      - '-f'
+      - 'k8s/hpa.yaml'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
       - 'CLOUDSDK_CONTAINER_CLUSTER=lab-cluster'
