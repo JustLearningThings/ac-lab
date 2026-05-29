@@ -29,7 +29,7 @@ def ask_service_2(name: str = "student"):
 
         return {
             "service": "service-1",
-            "message": "Service 1 received your request and contacted Service 2",
+            "message": "Service 1 received your request and contacted Service 2 (UPDATED)",
             "response_from_service_2": data_from_service_2
         }
 
